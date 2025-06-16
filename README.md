@@ -11,6 +11,129 @@ The Smart Parking System is a digital design project implemented in Verilog that
   <img src="./image/block_diagram_smart_parking_system.jpg" alt="System Block Diagram" width="700">
 </div>
 
+## How to Run the Project
+
+### Prerequisites
+1. Verilog HDL simulator (ModelSim, Icarus Verilog, or Xilinx Vivado)
+2. FPGA development board (for hardware implementation)
+
+### Simulation Setup
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/KNguyen260404/Smart_parking_verilog.git
+   cd Smart_parking_verilog
+   ```
+
+2. **Run simulation for individual modules**
+   
+   For ModelSim:
+   ```bash
+   # For Vehicle Counter module
+   cd Vehicle_counter
+   vlog Vehicle_counter.v Vehicle_counter_tb.v
+   vsim -novopt work.Vehicle_counter_tb
+   
+   # For Sensor Interface module
+   cd ../Sensor_interface
+   vlog Sensor_interface.v Sensor_interface_tb.v
+   vsim -novopt work.Sensor_interface_tb
+   
+   # For Barrier Control module
+   cd ../Barrier_control
+   vlog Barrier_control.v Barrier_control_tb.v
+   vsim -novopt work.Barrier_control_tb
+   
+   # For Display module
+   cd ../Display_module
+   vlog Display_module.v Display_module_tb.v
+   vsim -novopt work.Display_module_tb
+   
+   # For Fee Calculator module
+   cd ../Fee_calculator
+   vlog Fee_calculator.v Fee_calculator_tb.v
+   vsim -novopt work.Fee_calculator_tb
+   
+   # For FSM Control module
+   cd ../FSM_control
+   vlog Fsm_control.v Fsm_control_tb.v
+   vsim -novopt work.Fsm_control_tb
+   ```
+   
+   For Icarus Verilog:
+   ```bash
+   # For Vehicle Counter module
+   cd Vehicle_counter
+   iverilog -o vehicle_counter_sim Vehicle_counter.v Vehicle_counter_tb.v
+   vvp vehicle_counter_sim
+   gtkwave vehicle_counter_waveform.vcd
+   
+   # Similar commands for other modules
+   ```
+
+3. **Run complete system simulation**
+   ```bash
+   cd Smart_parking_system
+   vlog Smart_parking_system.v Smart_parking_system_tb.v
+   vsim -novopt work.Smart_parking_system_tb
+   ```
+
+4. **View waveforms**
+   - In ModelSim: After simulation, add signals to the wave window and run the simulation
+   - In GTKWave: `gtkwave <module_name>_waveform.vcd`
+
+### FPGA Implementation
+
+1. **Create a new project in your FPGA development tool** (Xilinx Vivado or Intel Quartus)
+
+2. **Add all Verilog files to the project**
+   - Add all module files from their respective directories
+   - Set Smart_parking_system.v as the top-level module
+
+3. **Assign pin constraints**
+   - Map the input/output ports to physical pins on your FPGA board
+   - Create a constraints file (.xdc for Xilinx or .qsf for Intel)
+
+4. **Synthesize and implement the design**
+   - Run synthesis
+   - Run implementation
+   - Generate bitstream
+
+5. **Program the FPGA**
+   - Connect your FPGA board to your computer
+   - Program the device with the generated bitstream
+
+### Testing the System
+
+1. **Entry/Exit Testing**
+   - Simulate vehicle entry by triggering the entry sensor
+   - Provide a valid card ID for authentication
+   - Observe barrier opening, vehicle counting, and display updates
+
+2. **Fee Calculation Testing**
+   - Simulate vehicle exit after some time
+   - Verify fee calculation based on parking duration
+   - Check display for fee amount
+
+3. **Edge Cases Testing**
+   - Test full parking scenario
+   - Test emergency mode
+   - Test invalid card handling
+
+### Troubleshooting
+
+1. **Timing Issues**
+   - If timing constraints are not met, adjust clock frequency or optimize critical paths
+   - Check for setup and hold time violations
+
+2. **Simulation vs Hardware Differences**
+   - Parameters like DEBOUNCE_DELAY may need adjustment for real hardware
+   - Replace simulation-only constructs with synthesizable code
+
+3. **Common Issues**
+   - Sensor debouncing problems: Increase DEBOUNCE_DELAY parameter
+   - Barrier timing issues: Adjust BARRIER_DELAY parameter
+   - Fee calculation errors: Check time unit calculations
+
 ## System Architecture
 The system consists of six main modules:
 
@@ -52,6 +175,10 @@ The system consists of six main modules:
 | vehicle_count | 6 | output | → FSM Control Module<br>→ Display Module |
 | available_spaces | 8 | output | → Display Module<br>→ System output (available_spaces) |
 | parking_full | 1 | output | → FSM Control Module<br>→ Display Module<br>→ System output (parking_full) |
+
+<div align="center">
+  <img src="./image/vehicle_counter_waveform.jpg" alt="Vehicle Counter Waveform" width="100%">
+</div>
   </div>
   
   <div style="width: 45%; margin-bottom: 20px;">
@@ -71,6 +198,10 @@ The system consists of six main modules:
 | entry_barrier | 1 | output | → Entry barrier mechanism<br>→ System output |
 | exit_barrier | 1 | output | → Exit barrier mechanism<br>→ System output |
 | barrier_status | 2 | output | → FSM Control Module<br>→ Display Module |
+
+<div align="center">
+  <img src="./image/barrier_control_waveform.jpg" alt="Barrier Control Waveform" width="100%">
+</div>
   </div>
   
   <div style="width: 45%; margin-bottom: 20px;">
@@ -87,6 +218,10 @@ The system consists of six main modules:
 | exit_sensor | 1 | output | → FSM Control Module |
 | entry_passed | 1 | output | → FSM Control Module<br>→ Vehicle Counter Module |
 | exit_passed | 1 | output | → FSM Control Module<br>→ Vehicle Counter Module |
+
+<div align="center">
+  <img src="./image/sensor_interface_waveform.jpg" alt="Sensor Interface Waveform" width="100%">
+</div>
   </div>
   
   <div style="width: 45%; margin-bottom: 20px;">
@@ -106,6 +241,10 @@ The system consists of six main modules:
 | segment_display | 8 | output | → System output |
 | digit_select | 4 | output | → System output |
 | led_indicators | 4 | output | → System output |
+
+<div align="center">
+  <img src="./image/display_module_waveform.jpg" alt="Display Module Waveform" width="100%">
+</div>
   </div>
   
   <div style="width: 45%; margin-bottom: 20px;">
@@ -122,6 +261,10 @@ The system consists of six main modules:
 | calculate_fee | 1 | input | From FSM Control Module |
 | fee_amount | 8 | output | → Display Module<br>→ System output (fee_amount) |
 | fee_valid | 1 | output | → FSM Control Module |
+
+<div align="center">
+  <img src="./image/fee_calculator_waveform.jpg" alt="Fee Calculator Waveform" width="100%">
+</div>
   </div>
   
   <div style="width: 45%; margin-bottom: 20px;">
@@ -150,6 +293,10 @@ The system consists of six main modules:
 | alarm | 1 | output | → Display Module<br>→ System output |
 | calculate_fee | 1 | output | → Fee Calculator Module |
 | verify_card | 1 | output | → Authentication system |
+
+<div align="center">
+  <img src="./image/fsm_controller_waveform.jpg" alt="FSM Control Waveform" width="100%">
+</div>
   </div>
 </div>
 
@@ -194,6 +341,12 @@ The system consists of six main modules:
 10. **Fee Calculator Module** → **FSM Control Module**:
     - Transmits signal: fee_valid
     - FSM Control Module knows fee calculation is complete
+
+## System Integration and Complete Waveform
+
+<div align="center">
+  <img src="./image/smart_parking_system_waveform.jpg" alt="Complete System Waveform" width="100%">
+</div>
 
 ## Specifications
 
@@ -381,4 +534,4 @@ For physical implementation, the following components are needed:
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the Nguyen :) License - see the LICENSE file for details. 

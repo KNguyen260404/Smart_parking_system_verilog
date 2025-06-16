@@ -530,7 +530,7 @@ For physical implementation, the following components are needed:
 
 - **GitHub**: [https://github.com/KNguyen260404](https://github.com/KNguyen260404)
 - **Email**: nguyenvhk.22ceb@vku.udn.vn
-- **Project Repository**: [https://github.com/KNguyen260404/Smart_parking_verilog](https://github.com/KNguyen260404/Smart_parking_verilog)
+- **Project Repository**: [https://github.com/KNguyen260404/Smart_parking_system_verilog](https://github.com/KNguyen260404/Smart_parking_system_verilog)
 
 ## License
 
